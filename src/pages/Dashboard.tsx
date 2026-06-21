@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [ownedUtensils, setOwnedUtensils] = useState<string[]>(loadUtensils)
   const [selectedTip, setSelectedTip] = useState(0)
   const [toast, setToast] = useState({ show: false, msg: '' })
+  const [activeMeal, setActiveMeal] = useState('breakfast')
 
   const allRecipes = useMemo(() => getAllRecipes(data.customRecipes), [data.customRecipes])
   const todayStr = new Date().toISOString().split('T')[0]
@@ -120,42 +121,40 @@ export default function Dashboard() {
         <div className="section-body">
           {menu ? (
             <div className="space-y-4">
-              {(['breakfast','lunch','dinner','snack'] as const).map(key => {
-                const recipes = menu[key]
-                if (!recipes.length) return null
-                const icons: Record<string, string> = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' }
-                const labels: Record<string, string> = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' }
-                return (
-                  <div key={key}>
-                    <h3 className="text-sm font-bold mb-2" style={{color:'#5A6B5C'}}>{icons[key]} {labels[key]}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {recipes.map(r => <RecipeCard key={r.id} recipe={r} onClick={() => setDetail(r)} />)}
-                    </div>
+              {/* Meal tabs */}
+              <div className="meal-plan-tabs">
+                {(['breakfast','lunch','dinner','snack'] as const).map(key => {
+                  const icons: Record<string, string> = {breakfast:'🌅', lunch:'☀️', dinner:'🌙', snack:'🍎'}
+                  const labels: Record<string, string> = {breakfast:'早餐', lunch:'午餐', dinner:'晚餐', snack:'加餐'}
+                  return (
+                    <button key={key} onClick={() => setActiveMeal(key)}
+                      className={"meal-tab" + (activeMeal === key ? ' active' : '')}>
+                      {icons[key]} {labels[key]}
+                    </button>
+                  )
+                })}
+              </div>
+              {/* Show active meal's recipes */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {menu[activeMeal as keyof typeof menu].map(r => (
+                  <RecipeCard key={r.id} recipe={r} onClick={() => setDetail(r)} />
+                ))}
+              </div>
+              {/* Calorie summary */}
+              <div className="calorie-summary">
+                <div className="cal-item"><div className="val">{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.cal,0)}</div><div className="lab">总热量 kcal</div></div>
+                <div className="cal-item"><div className="val">{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.protein,0)}g</div><div className="lab">蛋白质</div></div>
+                <div className="cal-item"><div className="val">{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.carb,0)}g</div><div className="lab">碳水化合物</div></div>
+                <div className="cal-item"><div className="val">{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.fat,0)}g</div><div className="lab">脂肪</div></div>
+                <div style={{flex:1, minWidth:'200px'}}>
+                  <div className="flex justify-between text-xs mb-1" style={{color:'#5A6B5C'}}>
+                    <span>热量进度</span><span>{Math.min(100, Math.round(Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.cal,0) / 1800 * 100))}%</span>
                   </div>
-                )
-              })}
-              {(() => {
-                const totalCal = Object.values(menu).flat().reduce((s, r) => s + r.nutrition.cal, 0)
-                const pct = Math.min(100, Math.round(totalCal / 1800 * 100))
-                return (
-                  <div className="mt-3 p-4 rounded-xl" style={{background:'#E8F5D8'}}>
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex gap-5">
-                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{totalCal}</div><div className="text-xs" style={{color:'#5A6B5C'}}>总热量 kcal</div></div>
-                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.protein,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>蛋白质</div></div>
-                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.carb,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>碳水</div></div>
-                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.fat,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>脂肪</div></div>
-                      </div>
-                      <div className="flex-1 min-w-[120px]">
-                        <div className="flex justify-between text-xs" style={{color:'#5A6B5C'}}><span>热量进度</span><span>{pct}%</span></div>
-                        <div className="h-3 rounded-full mt-1 overflow-hidden" style={{background:'#e0e0e0'}}>
-                          <div className="h-full rounded-full transition-all duration-500" style={{width: `${pct}%`, background: 'linear-gradient(90deg,#93C572,#3E5A30)'}} />
-                        </div>
-                      </div>
-                    </div>
+                  <div className="h-3 rounded-full overflow-hidden" style={{background:'#e0e0e0'}}>
+                    <div className="h-full rounded-full transition-all duration-500" style={{width: Math.min(100, Math.round(Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.cal,0) / 1800 * 100)) + '%', background:'linear-gradient(90deg,#93C572,#3E5A30)'}} />
                   </div>
-                )
-              })()}
+                </div>
+              </div>
             </div>
           ) : (
             <div className="text-center py-10" style={{color:'#8A9B8C'}}>
@@ -213,6 +212,63 @@ export default function Dashboard() {
                 </div>
               )
             })}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== 补货与食谱建议 ===== */}
+      <div className="section-card">
+        <div className="section-header">
+          <h2><span>🛒</span> 补货与食谱建议</h2>
+        </div>
+        <div className="section-body">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <h3 className="text-sm font-bold mb-3" style={{color:'#5A6B5C'}}>📉 库存不足提醒</h3>
+              <div className="suggestion-list">
+                {data.ingredients.filter(function(i) { return i.expiryDate && daysUntil(i.expiryDate) <= 2 && daysUntil(i.expiryDate) >= 0; }).length === 0 ? (
+                  <div className="empty-state" style={{padding:'20px'}}><div className="es-icon">✅</div><p className="text-sm">库存充足，无需补货</p></div>
+                ) : data.ingredients.filter(function(i) { return i.expiryDate && daysUntil(i.expiryDate) <= 2 && daysUntil(i.expiryDate) >= 0; }).slice(0, 3).map(function(i) {
+                  var d = daysUntil(i.expiryDate!);
+                  return (
+                    <div key={i.id} className={"suggestion-item " + (d <= 1 ? 'priority-high' : 'priority-mid')}>
+                      <div className="s-icon">{['🥦','🥩','📦'][i.category === '蔬菜' ? 0 : i.category === '肉类' ? 1 : 2]}</div>
+                      <div className="s-body">
+                        <h4>{i.name} <span className={"tag " + (d <= 1 ? 'tag-red' : 'tag-orange')}>{d === 0 ? '今天过期' : d + '天后过期'}</span></h4>
+                        <p>当前库存 {i.quantity}{i.unit}，建议尽快使用或补购</p>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="suggestion-item priority-low">
+                  <div className="s-icon">'🐟'</div>
+                  <div className="s-body"><h4>补充深海鱼类</h4><p>近期蛋白质来源以鸡肉/蛋为主，建议购入三文鱼或鲭鱼补充Omega-3</p></div>
+                </div>
+                <div className="suggestion-item priority-mid">
+                  <div className="s-icon">'🥬'</div>
+                  <div className="s-body"><h4>增加深色绿叶菜</h4><p>菠菜/羽衣甘蓝富含叶酸和维K，建议每日至少一种深色蔬菜</p></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold mb-3" style={{color:'#5A6B5C'}}>📅 近7日饮食记录</h3>
+              <div className="history-grid" style={{gridTemplateColumns:'1fr'}}>
+                {data.mealLogs.length === 0 ? (
+                  <div className="empty-state" style={{padding:'20px'}}><div className="es-icon">📅</div><p className="text-sm">暂无饮食记录</p></div>
+                ) : data.mealLogs.slice(0, 3).map(function(log) {
+                  var r = allRecipes.find(function(r) { return r.id === log.recipeId; });
+                  return (
+                    <div key={log.id} className="history-day">
+                      <div className="date">📅 {log.date}</div>
+                      <div className="meals">
+                        <div className="meal-item"><span>{log.cooked ? '🌅' : '🔘'} {log.recipeName}</span></div>
+                      </div>
+                      <div className="total-cal">{(r ? r.nutrition.cal : 0) + ' kcal'}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
