@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
-import { createIngredient, daysUntil, formatDate } from '../data/storage'
+import { createIngredient, daysUntil, formatDate, now } from '../data/storage'
 import { parseShoppingText } from '../lib/nlp-parser'
 import type { Ingredient, IngredientCategory, Unit } from '../types'
 
@@ -45,9 +45,23 @@ export default function Ingredients() {
 
   function confirmParse() {
     if (!parseResult) return
+    // Aggregate duplicate names & merge with existing
+    const merged = new Map<string, { quantity: number; unit: string; category: string }>()
     for (const item of parseResult) {
-      for (const p of parseShoppingText(`${item.name} ${item.qty}`)) {
-        addIngredient(createIngredient(p.name, p.category, p.quantity, p.unit, 0))
+      const prev = merged.get(item.name)
+      const qtyNum = parseInt(item.qty.match(/\d+/)?.[0] || "0")
+      if (prev) {
+        prev.quantity += qtyNum
+      } else {
+        merged.set(item.name, { quantity: qtyNum, unit: item.qty.replace(/\d+/g, "") || "g", category: item.cat })
+      }
+    }
+    for (const [name, info] of merged) {
+      const existing = data.ingredients.find(i => i.name === name)
+      if (existing) {
+        updateIngredient(existing.id, { quantity: existing.quantity + info.quantity, updatedAt: now() })
+      } else {
+        addIngredient(createIngredient(name, info.category as IngredientCategory, info.quantity, info.unit as Unit, 0))
       }
     }
     setPasteText('')
@@ -77,10 +91,24 @@ export default function Ingredients() {
         calPer100g: form.calPer100g, expiryDate: form.expiryDate || undefined, note: form.note || undefined,
       })
     } else {
-      addIngredient(createIngredient(
-        form.name, form.category, form.quantity, form.unit,
-        form.calPer100g, form.expiryDate || undefined, form.note || undefined
-      ))
+      // Merge with existing ingredient if same name
+      const existing = data.ingredients.find(i => i.name === form.name)
+      if (existing) {
+        updateIngredient(existing.id, {
+          quantity: existing.quantity + form.quantity,
+          category: form.category,
+          unit: form.unit,
+          calPer100g: form.calPer100g || existing.calPer100g,
+          expiryDate: form.expiryDate || existing.expiryDate,
+          note: form.note || existing.note,
+          updatedAt: now(),
+        })
+      } else {
+        addIngredient(createIngredient(
+          form.name, form.category, form.quantity, form.unit,
+          form.calPer100g, form.expiryDate || undefined, form.note || undefined
+        ))
+      }
     }
     setShowForm(false)
   }
