@@ -51,7 +51,13 @@ export default function Recipes() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in-up">
+      <div className="section-card">
+        <div className="section-header">
+          <h2><span>📖</span> 食谱库</h2>
+          <button onClick={() => setShowForm(true)} className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full font-medium hover:bg-white/30 transition">+ 自定义</button>
+        </div>
+        <div className="section-body">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg text-gray-800">📖 食谱库</h2>
         <button onClick={() => setShowForm(true)} className="text-sm bg-mint-500 text-white px-4 py-1.5 rounded-lg font-medium hover:bg-mint-600">+ 自定义</button>
@@ -95,6 +101,9 @@ export default function Recipes() {
             </div>
           )
         })}
+
+        </div>
+      </div>
       </div>
 
       <RecipeDetailModal recipe={detail} onClose={() => setDetail(null)} />

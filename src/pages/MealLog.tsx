@@ -61,7 +61,12 @@ export default function MealLog() {
   }, 0)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in-up">
+      <div className="section-card">
+        <div className="section-header">
+          <h2><span>📝</span> 饮食记录</h2>
+        </div>
+        <div className="section-body">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg text-gray-800">📝 饮食记录</h2>
       </div>
@@ -157,6 +162,8 @@ export default function MealLog() {
         </div>
       )}
 
+        </div>
+      </div>
       <RecipeDetailModal recipe={detail} onClose={() => setDetail(null)} />
     </div>
   )

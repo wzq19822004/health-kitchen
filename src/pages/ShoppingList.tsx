@@ -38,7 +38,13 @@ export default function ShoppingList() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in-up">
+      <div className="section-card">
+        <div className="section-header">
+          <h2><span>🛒</span> 购物清单</h2>
+          <button onClick={generateFromStock} className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full font-medium hover:bg-white/30 transition">⚡ 自动生成</button>
+        </div>
+        <div className="section-body">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg text-gray-800">🛒 购物清单</h2>
         <button onClick={generateFromStock} className="text-xs bg-mint-500 text-white px-3 py-1.5 rounded-lg font-medium hover:bg-mint-600">⚡ 自动生成</button>
@@ -105,6 +111,8 @@ export default function ShoppingList() {
           </div>
         </div>
       )}
+    </div>
+      </div>
     </div>
   )
 }

@@ -130,7 +130,13 @@ export default function Ingredients() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in-up">
+      <div className="section-card">
+        <div className="section-header">
+          <h2><span>🥬</span> 食材库存管理</h2>
+          <button onClick={openAdd} className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full font-medium hover:bg-white/30 transition">+ 添加</button>
+        </div>
+        <div className="section-body">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg text-gray-800">🥬 食材库存</h2>
@@ -193,6 +199,9 @@ export default function Ingredients() {
             </div>
           </div>
         ))}
+
+        </div>
+      </div>
       </div>
 
       {/* Modal */}
