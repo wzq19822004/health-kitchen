@@ -1,8 +1,7 @@
 import type { Recipe } from '../types'
 
-const diffLabel = ['', '⭐简单', '⭐⭐中等', '⭐⭐⭐较难']
-const diffColor = ['', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-700']
-const mealLabel: Record<string, string> = { '早餐': '🌅', '午餐': '☀️', '晚餐': '🌙', '加餐': '🍎' }
+const diffLabel = ['', '⭐ 简单', '⭐⭐ 中等', '⭐⭐⭐ 较难']
+const diffColor = ['', '#5cb85c', '#f0ad4e', '#e74c3c']
 
 interface Props {
   recipe: Recipe
@@ -13,32 +12,33 @@ interface Props {
 
 export default function RecipeCard({ recipe, onClick, cookedCount = 0, lastCooked }: Props) {
   return (
-    <div onClick={onClick} className="bg-white rounded-xl border border-warm-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer active:scale-[0.98]">
-      <div className="bg-gradient-to-br from-mint-50 to-mint-100 h-24 flex items-center justify-center text-4xl relative">
-        <span className={diffColor[recipe.difficulty] + ' absolute top-2 left-2 text-xs px-2 py-0.5 rounded-full font-medium'}>
+    <div onClick={onClick} className="bg-white rounded-xl border overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer active:scale-[0.98] hover:-translate-y-1" style={{borderColor:'#E0DDD4'}}>
+      {/* Image area with badges */}
+      <div className="relative h-24 flex items-center justify-center text-4xl" style={{background: 'linear-gradient(135deg,#E8F5D8,#C8E6A0)'}}>
+        <span className="diff-badge" style={{background: diffColor[recipe.difficulty] + '22', color: diffColor[recipe.difficulty]}}>
           {diffLabel[recipe.difficulty]}
         </span>
-        <span className="absolute top-2 right-2 bg-white/80 rounded-full px-2 py-0.5 text-xs font-bold text-mint-700">
-          🔥 {recipe.nutrition.cal}
-        </span>
+        <span className="cal-badge">🔥 {recipe.nutrition.cal}</span>
         <span>{recipe.emoji}</span>
       </div>
-      <div className="p-3">
-        <h3 className="font-bold text-sm text-gray-800 mb-1">{recipe.name}</h3>
-        <div className="text-xs text-gray-500 mb-2 line-clamp-2">
+      {/* Body */}
+      <div className="p-3.5">
+        <h3 className="font-bold text-sm" style={{color:'#2D3B2F'}}>{recipe.name}</h3>
+        <div className="text-xs mt-1.5" style={{color:'#5A6B5C'}}>
           {recipe.ingredients.map(i => i.name).join(' · ')}
         </div>
-        <div className="flex items-center justify-between text-xs text-gray-400">
+        <div className="flex items-center gap-3 mt-2 text-xs" style={{color:'#8A9B8C'}}>
           <span>⏱️ {recipe.cookTime}分钟</span>
-          <span>{mealLabel[recipe.mealType] || '🍽️'} {recipe.mealType}</span>
+          <span>{recipe.nutrition.protein}g蛋白 · {recipe.nutrition.carb}g碳水</span>
         </div>
-        {cookedCount > 0 && (
-          <div className="mt-1.5 flex items-center gap-2 text-xs">
-            <span className="text-mint-600">✓ 已做{cookedCount}次</span>
-            {lastCooked && <span className="text-gray-400">最近{lastCooked}</span>}
-          </div>
-        )}
       </div>
+      {/* Meta footer */}
+      {cookedCount > 0 && (
+        <div className="border-t px-3.5 py-2 flex items-center justify-between" style={{borderColor:'#E0DDD4', background:'#FAFAF5'}}>
+          <span className="tag tag-green">✓ 已做{cookedCount}次</span>
+          {lastCooked && <span className="text-xs" style={{color:'#8A9B8C'}}>最近{lastCooked}</span>}
+        </div>
+      )}
     </div>
   )
 }

@@ -9,12 +9,10 @@ import { HEALTH_TIPS } from '../data/health-tips'
 import type { Recipe, DailyMenu } from '../types'
 
 const UTENSIL_KEY = 'hk_utensils'
-
 function loadUtensils(): string[] {
   try { return JSON.parse(localStorage.getItem(UTENSIL_KEY) || '[]') }
   catch { return [] }
 }
-
 function saveUtensils(ids: string[]) {
   localStorage.setItem(UTENSIL_KEY, JSON.stringify(ids))
 }
@@ -25,8 +23,7 @@ export default function Dashboard() {
   const [menu, setMenu] = useState<DailyMenu | null>(data.currentMenu)
   const [ownedUtensils, setOwnedUtensils] = useState<string[]>(loadUtensils)
   const [selectedTip, setSelectedTip] = useState(0)
-  const [showToast, setShowToast] = useState(false)
-  const [toastMsg, setToastMsg] = useState('')
+  const [toast, setToast] = useState({ show: false, msg: '' })
 
   const allRecipes = useMemo(() => getAllRecipes(data.customRecipes), [data.customRecipes])
   const todayStr = new Date().toISOString().split('T')[0]
@@ -35,21 +32,18 @@ export default function Dashboard() {
     const r = allRecipes.find(rec => rec.id === l.recipeId)
     return sum + (r?.nutrition.cal || 0)
   }, 0)
-
   const expiringSoon = data.ingredients.filter(i => i.expiryDate && daysUntil(i.expiryDate) <= 3 && daysUntil(i.expiryDate) >= 0)
   const expired = data.ingredients.filter(i => i.expiryDate && daysUntil(i.expiryDate) < 0)
 
   useEffect(() => { saveUtensils(ownedUtensils) }, [ownedUtensils])
-
-  // Tip rotation
   useEffect(() => {
     const iv = setInterval(() => setSelectedTip(i => (i + 1) % Math.min(HEALTH_TIPS.length, 4)), 8000)
     return () => clearInterval(iv)
   }, [])
 
-  function toast(msg: string) {
-    setToastMsg(msg); setShowToast(true)
-    setTimeout(() => setShowToast(false), 2500)
+  function showToast(msg: string) {
+    setToast({ show: true, msg })
+    setTimeout(() => setToast({ show: false, msg: '' }), 2500)
   }
 
   function toggleUtensil(id: string) {
@@ -60,7 +54,7 @@ export default function Dashboard() {
     const newMenu = generateDailyMenu(allRecipes, data.ingredients, data.mealLogs)
     setMenu(newMenu)
     setCurrentMenu(newMenu)
-    toast('🍽️ 菜单已生成')
+    showToast('🍽️ 菜单已生成')
   }
 
   function handleAdopt() {
@@ -76,54 +70,56 @@ export default function Dashboard() {
         }
       }
     }
-    toast(`✅ 已添加 ${count} 道菜到饮食记录`)
+    showToast(`✅ 已添加 ${count} 道菜到饮食记录`)
   }
 
   return (
-    <div className="space-y-4 animate-fade-in-up">
-      {/* ===== Hero Section ===== */}
-      <div className="hero-gradient rounded-2xl p-5 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-        <div className="relative">
-          <h1 className="text-xl font-bold mb-1">🌿 今日健康</h1>
-          <p className="text-white/70 text-xs mb-4">基于家中现有食材，智能生成每日菜单</p>
-          <div className="grid grid-cols-4 gap-2">
+    <div className="animate-fade-in-up space-y-6">
+      {/* ===== FULL-WIDTH HERO ===== */}
+      <div className="full-width hero-wrap">
+        <div className="max-w-5xl mx-auto px-4 py-8 text-center relative">
+          <h1 className="text-white text-2xl font-extrabold mb-2 tracking-wide">🌿 居家健康厨房</h1>
+          <p className="text-white/80 text-sm leading-relaxed mb-5 max-w-xl mx-auto">
+            基于家中现有食材与器具，智能生成每日健康菜单<br />
+            科学养生 · 热量追踪 · 库存管理 · 营养均衡
+          </p>
+          <div className="flex justify-center gap-6 sm:gap-10 flex-wrap">
             {[
-              { icon: '🥬', value: data.ingredients.length, label: '食材' },
-              { icon: '📖', value: allRecipes.length, label: '可做菜品' },
-              { icon: '🔥', value: todayCal, label: '今日 kcal' },
-              { icon: '📝', value: data.mealLogs.filter(l => l.cooked).length, label: '已做记录' },
+              { value: data.ingredients.length, label: '当前食材' },
+              { value: allRecipes.length, label: '可做菜品' },
+              { value: todayCal, label: '今日摄入 kcal' },
+              { value: data.mealLogs.filter(l => l.cooked).length, label: '已做记录' },
             ].map(s => (
               <div key={s.label} className="text-center">
-                <div className="text-2xl font-extrabold text-mint-200 drop-shadow-sm">{s.value}</div>
-                <div className="text-[10px] text-white/70 mt-0.5">{s.icon} {s.label}</div>
+                <div className="text-2xl sm:text-3xl font-extrabold" style={{color:'#93C572'}}>{s.value}</div>
+                <div className="text-xs text-white/70 mt-0.5">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ===== Expired Alert ===== */}
+      {/* Expired alert */}
       {(expired.length > 0 || expiringSoon.length > 0) && (
-        <div className="bg-red-soft rounded-xl p-4 border border-red-200 animate-fade-in-up">
-          <h3 className="font-bold text-sm text-red-700 mb-1.5">⚠️ 食材提醒</h3>
-          {expired.map(i => <div key={i.id} className="text-xs text-red-600">❌ {i.name} 已过期 {Math.abs(daysUntil(i.expiryDate!))} 天</div>)}
-          {expiringSoon.map(i => <div key={i.id} className="text-xs text-orange-600">⚠️ {i.name} 还有 {daysUntil(i.expiryDate!)} 天过期</div>)}
+        <div className="rounded-xl p-4" style={{background:'#FDEDEC', border:'1px solid #f5c6cb'}}>
+          <h3 className="font-bold text-sm mb-1.5" style={{color:'#C0392B'}}>⚠️ 食材提醒</h3>
+          {expired.map(i => <div key={i.id} className="text-xs" style={{color:'#C0392B'}}>❌ {i.name} 已过期 {Math.abs(daysUntil(i.expiryDate!))} 天</div>)}
+          {expiringSoon.map(i => <div key={i.id} className="text-xs" style={{color:'#E67E22'}}>⚠️ {i.name} 还有 {daysUntil(i.expiryDate!)} 天过期</div>)}
         </div>
       )}
 
-      {/* ===== Daily Menu ===== */}
+      {/* Daily Menu */}
       <div className="section-card">
         <div className="section-header">
-          <h2><span>📋</span> 今日推荐菜单</h2>
+          <h2><span>📋</span> 今日健康菜单</h2>
           <div className="flex gap-2">
-            <button onClick={handleGenerate} className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full font-medium hover:bg-white/30 transition">🎲 生成</button>
-            {menu && <button onClick={handleAdopt} className="text-xs bg-mint-200 text-mint-800 px-3 py-1.5 rounded-full font-medium hover:bg-mint-100 transition">✅ 采用</button>}
+            <button onClick={handleGenerate} className="text-sm px-4 py-1.5 rounded-full font-medium transition" style={{background:'rgba(255,255,255,0.15)', color:'#fff'}}>🎲 重新生成</button>
+            {menu && <button onClick={handleAdopt} className="text-sm px-4 py-1.5 rounded-full font-medium transition" style={{background:'#93C572', color:'#3E5A30'}}>✅ 采用此菜单</button>}
           </div>
         </div>
         <div className="section-body">
           {menu ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {(['breakfast','lunch','dinner','snack'] as const).map(key => {
                 const recipes = menu[key]
                 if (!recipes.length) return null
@@ -131,8 +127,8 @@ export default function Dashboard() {
                 const labels: Record<string, string> = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' }
                 return (
                   <div key={key}>
-                    <h3 className="text-xs font-bold text-gray-500 mb-1.5">{icons[key]} {labels[key]}</h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <h3 className="text-sm font-bold mb-2" style={{color:'#5A6B5C'}}>{icons[key]} {labels[key]}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {recipes.map(r => <RecipeCard key={r.id} recipe={r} onClick={() => setDetail(r)} />)}
                     </div>
                   </div>
@@ -141,76 +137,77 @@ export default function Dashboard() {
               {(() => {
                 const totalCal = Object.values(menu).flat().reduce((s, r) => s + r.nutrition.cal, 0)
                 const pct = Math.min(100, Math.round(totalCal / 1800 * 100))
-                const color = pct > 90 ? 'bg-orange-400' : pct > 70 ? 'bg-yellow-400' : 'bg-mint-400'
                 return (
-                  <div className="mt-2">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>🔥 热量进度</span><span>{totalCal} / 1800 kcal ({pct}%)</span>
-                    </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full transition-all duration-500 ${color}`} style={{ width: `${pct}%` }} />
+                  <div className="mt-3 p-4 rounded-xl" style={{background:'#E8F5D8'}}>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className="flex gap-5">
+                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{totalCal}</div><div className="text-xs" style={{color:'#5A6B5C'}}>总热量 kcal</div></div>
+                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.protein,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>蛋白质</div></div>
+                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.carb,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>碳水</div></div>
+                        <div className="text-center"><div className="text-lg font-extrabold" style={{color:'#3E5A30'}}>{Object.values(menu).flat().reduce((s,r)=>s+r.nutrition.fat,0)}g</div><div className="text-xs" style={{color:'#5A6B5C'}}>脂肪</div></div>
+                      </div>
+                      <div className="flex-1 min-w-[120px]">
+                        <div className="flex justify-between text-xs" style={{color:'#5A6B5C'}}><span>热量进度</span><span>{pct}%</span></div>
+                        <div className="h-3 rounded-full mt-1 overflow-hidden" style={{background:'#e0e0e0'}}>
+                          <div className="h-full rounded-full transition-all duration-500" style={{width: `${pct}%`, background: 'linear-gradient(90deg,#93C572,#3E5A30)'}} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )
               })()}
             </div>
           ) : (
-            <div className="text-center py-6 text-gray-400">
-              <div className="text-4xl mb-2">👨‍🍳</div>
-              <p className="text-sm mb-3">点击生成，系统会根据现有食材推荐菜单</p>
-              <button onClick={handleGenerate} className="text-sm bg-mint-500 text-white px-5 py-2 rounded-full font-medium hover:bg-mint-600 transition">🎲 生成今日菜单</button>
+            <div className="text-center py-10" style={{color:'#8A9B8C'}}>
+              <div className="text-5xl mb-3">👨‍🍳</div>
+              <p className="text-sm">点击右上角「重新生成」，AI 将为您推荐适合今天的健康菜单！</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* ===== Kitchen Utensils ===== */}
+      {/* Utensil Selector */}
       <div className="section-card">
         <div className="section-header">
           <h2><span>🍳</span> 厨房器具</h2>
-          <span className="text-xs bg-white/20 text-white px-2.5 py-1 rounded-full">{ownedUtensils.length}/{UTENSILS.length}</span>
+          <span className="tag tag-green">已选 {ownedUtensils.length} 件</span>
         </div>
         <div className="section-body">
-          <div className="grid grid-cols-5 sm:grid-cols-7 gap-2">
+          <div className="utensil-grid grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-3">
             {UTENSILS.map(u => (
               <button key={u.id} onClick={() => toggleUtensil(u.id)}
-                className={`flex flex-col items-center p-2 rounded-xl border-2 transition-all ${
+                className={`rounded-xl border-2 p-3 text-center transition-all cursor-pointer ${
                   ownedUtensils.includes(u.id)
-                    ? 'border-mint-500 bg-mint-50 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-mint-300'
-                }`}>
-                <span className={`text-xl ${ownedUtensils.includes(u.id) ? '' : 'opacity-40 grayscale'}`}>{u.icon}</span>
-                <span className={`text-[10px] mt-0.5 font-medium ${ownedUtensils.includes(u.id) ? 'text-mint-700' : 'text-gray-400'}`}>
-                  {u.name}
-                  {ownedUtensils.includes(u.id) && ' ✓'}
-                </span>
+                    ? 'border-green-dark bg-green-pale shadow-sm'
+                    : 'hover:border-green-light hover:bg-green-pale'
+                }`}
+                style={{borderColor: ownedUtensils.includes(u.id) ? '#3E5A30' : '#E0DDD4'}}>
+                <div className="text-2xl mb-1">{u.icon}</div>
+                <div className="text-xs font-semibold" style={{color: ownedUtensils.includes(u.id) ? '#3E5A30' : '#2D3B2F'}}>
+                  {u.name}{ownedUtensils.includes(u.id) ? ' ✓' : ''}
+                </div>
+                <div className="text-[10px] mt-0.5" style={{color:'#8A9B8C'}}>{u.note}</div>
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ===== Health Tips ===== */}
+      {/* Health Tips */}
       <div className="section-card">
         <div className="section-header">
-          <h2><span>🌿</span> 科学养生知识</h2>
-          <span className="text-xs bg-white/20 text-white px-2.5 py-1 rounded-full">{selectedTip + 1}/{Math.min(HEALTH_TIPS.length, 4)}</span>
+          <h2><span>🌿</span> 科学养生健康知识</h2>
+          <span className="tag tag-green">📚 基于最新科研</span>
         </div>
         <div className="section-body">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {HEALTH_TIPS.slice(0, 4).map((t, i) => {
-              const cls = {
-                green: 'bg-gradient-to-br from-green-50 to-green-100 text-green-800',
-                blue: 'bg-gradient-to-br from-blue-50 to-blue-100 text-blue-800',
-                teal: 'bg-gradient-to-br from-teal-50 to-teal-100 text-teal-800',
-                orange: 'bg-gradient-to-br from-orange-50 to-orange-100 text-orange-800',
-                purple: 'bg-gradient-to-br from-purple-50 to-purple-100 text-purple-800',
-                red: 'bg-gradient-to-br from-red-50 to-red-100 text-red-800',
-              }[t.color] || 'bg-gradient-to-br from-green-50 to-green-100 text-green-800'
+              const bg = { green: 'linear-gradient(135deg,#E8F5D8,#D0EBB0)', blue: 'linear-gradient(135deg,#EBF5FB,#CCE4F7)', orange: 'linear-gradient(135deg,#FEF9E7,#FDEBD0)', purple: 'linear-gradient(135deg,#F5EEF8,#E8DAEF)', red: 'linear-gradient(135deg,#FDEDEC,#FADBD8)', teal: 'linear-gradient(135deg,#E8F8F5,#C8EBE4)' }[t.color] || 'linear-gradient(135deg,#E8F5D8,#D0EBB0)'
               return (
-                <div key={t.id} className={`rounded-xl p-3.5 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${cls} ${i === selectedTip ? 'ring-2 ring-mint-400 scale-[1.02]' : ''}`}>
-                  <div className="text-2xl mb-1.5">{t.icon}</div>
-                  <h3 className="font-bold text-sm mb-1">{t.title}</h3>
+                <div key={t.id} className={`rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${i === selectedTip ? 'ring-2 ring-green-dark scale-[1.02]' : ''}`}
+                  style={{background: bg}}>
+                  <div className="text-2xl mb-2">{t.icon}</div>
+                  <h3 className="text-sm font-bold mb-1.5">{t.title}</h3>
                   <p className="text-xs leading-relaxed opacity-80">{t.body}</p>
                   <div className="text-[10px] opacity-50 mt-2 flex items-center gap-1">📖 {t.source}</div>
                 </div>
@@ -220,26 +217,28 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ===== Quick Actions ===== */}
+      {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { to: '/ingredients', icon: '🥬', label: '管理食材', color: 'bg-green-soft text-green-700' },
-          { to: '/recipes', icon: '📖', label: '浏览食谱', color: 'bg-blue-soft text-blue-700' },
-          { to: '/meal-log', icon: '📝', label: '饮食记录', color: 'bg-yellow-soft text-yellow-800' },
-          { to: '/shopping-list', icon: '🛒', label: '购物清单', color: 'bg-orange-soft text-orange-800' },
+          { to: '/ingredients', icon: '🥬', label: '食材库', color: '#E8F5D8', text: '#3E5A30' },
+          { to: '/recipes', icon: '📖', label: '食谱库', color: '#EBF5FB', text: '#1A5276' },
+          { to: '/meal-log', icon: '📝', label: '饮食记录', color: '#FEF9E7', text: '#A04000' },
+          { to: '/shopping-list', icon: '🛒', label: '购物清单', color: '#F5EEF8', text: '#512E5F' },
         ].map(a => (
           <a key={a.to} href={a.to}
-            className={`rounded-xl p-3.5 text-center transition-all hover:shadow-md hover:-translate-y-0.5 ${a.color}`}>
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md hover:-translate-y-0.5"
+            style={{background: a.color}}>
             <div className="text-2xl">{a.icon}</div>
-            <div className="text-xs font-bold mt-1">{a.label}</div>
+            <div className="text-xs font-bold mt-1.5" style={{color: a.text}}>{a.label}</div>
           </a>
         ))}
       </div>
 
       {/* Toast */}
-      {showToast && (
-        <div className="fixed bottom-24 sm:bottom-20 right-4 z-30 bg-mint-600 text-white px-4 py-2.5 rounded-xl shadow-lg text-sm font-medium animate-slide-in">
-          {toastMsg}
+      {toast.show && (
+        <div className="fixed bottom-28 sm:bottom-24 right-6 z-30 animate-slide-in px-5 py-3 rounded-xl shadow-lg text-sm font-medium text-white"
+          style={{background:'#3E5A30'}}>
+          {toast.msg}
         </div>
       )}
 
