@@ -33,11 +33,16 @@ export function generateDailyMenu(
   mealLogs: MealLog[],
   difficultyLimit: 1 | 2 | 3 = 2,
 ): DailyMenu {
-  const eligible = recipes.filter(r => {
+  // Try ingredient-matching first; fallback to difficulty-only
+  let eligible = recipes.filter(r => {
     if (r.difficulty > difficultyLimit) return false
     if (r.source === 'builtin' && !hasIngredients(r, ingredients)) return false
     return true
   })
+  // Fallback: if no recipes match ingredients, show difficulty-filtered picks
+  if (eligible.length === 0) {
+    eligible = recipes.filter(r => r.difficulty <= difficultyLimit)
+  }
 
   const scored = eligible.map(r => {
     const cookedCount = getRecipeCookCount(mealLogs, r.id)
@@ -53,10 +58,11 @@ export function generateDailyMenu(
 
   const menu: DailyMenu = { breakfast: [], lunch: [], dinner: [], snack: [] }
   const maxPerMeal = { breakfast: 2, lunch: 3, dinner: 3, snack: 1 }
+  const mealKey: Record<string, keyof DailyMenu> = { '早餐': 'breakfast', '午餐': 'lunch', '晚餐': 'dinner', '加餐': 'snack' }
 
   for (const { recipe } of scored) {
-    const meal = recipe.mealType as keyof DailyMenu
-    if (menu[meal].length < maxPerMeal[meal]) {
+    const meal = mealKey[recipe.mealType]
+    if (meal && menu[meal].length < maxPerMeal[meal]) {
       menu[meal].push(recipe)
     }
   }

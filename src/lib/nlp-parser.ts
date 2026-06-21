@@ -47,6 +47,15 @@ function detectCategory(name: string): IngredientCategory {
 }
 
 function parseQuantity(input: string): { quantity: number; unit: Unit } | null {
+  // Handle "x3" / "X3" / "×3" pattern (Chinese shorthand for quantity)
+  const xMatch = input.match(/^[xX×](\d+)\s*([a-zA-Z\u4e00-\u9fa5]+)?/)
+  if (xMatch) {
+    const qty = parseFloat(xMatch[1])
+    const unitStr = (xMatch[2] || '').toLowerCase()
+    const alias = UNIT_ALIASES[unitStr]
+    if (alias) return { quantity: qty, unit: alias.unit }
+    return { quantity: qty, unit: unitStr === 'l' ? 'ml' : (unitStr || '个') as Unit }
+  }
   const match = input.match(/(\d+\.?\d*)\s*([a-zA-Z\u4e00-\u9fa5]+)?/)
   if (!match) return null
   const qty = parseFloat(match[1])
@@ -68,13 +77,60 @@ export function parseShoppingText(text: string): ParsedIngredient[] {
   let clean = text.replace(/[（(][^)）]*[)）]/g, '') // remove parenthetical notes
   // Split by separators
   const separators = /[,，、\s\n\r]+/
-  const items = clean.split(separators).filter((s: string) => s.trim())
+  let items = clean.split(separators).filter((s: string) => s.trim().length > 0)
+  
+  // Merge quantity-only items back into previous name-only item
+  // e.g., "鸡翅 500g" → ["鸡翅","500g"] → ["鸡翅 500g"]
+  const merged: string[] = []
+  for (const item of items) {
+    if (/^\d/.test(item) && !/[\u4e00-\u9fff]/.test(item) && merged.length > 0) {
+      merged[merged.length - 1] += item
+    } else {
+      merged.push(item)
+    }
+  }
+  items = merged
   
   return items.map((item: string) => {
-    const nameMatch = item.match(/^([a-zA-Z\u4e00-\u9fff]+)/)
-    if (!nameMatch) return null
-    const name = nameMatch[1]
-    const rest = item.slice(name.length).trim()
+    let name: string
+    let rest: string
+    
+    // Pattern A: "番茄x3" / "鸡翅×5" (name + x-suffix quantity)
+    const xMatch = item.match(/^(.+?)[xX\u00d7](\d+)([a-zA-Z\u4e00-\u9fa5]*)$/)
+    if (xMatch) {
+      name = xMatch[1]
+      rest = xMatch[2] + (xMatch[3] || '个')
+    }
+    // Pattern B: "5个苹果" / "500g猪肉" (quantity prefix)
+    else if (/^\d/.test(item)) {
+      const numMatch = item.match(/^(\d+\.?\d*)\s*/)
+      if (numMatch) {
+        const afterNum = item.slice(numMatch[0].length)
+        // Try known units first (sorted by length to prioritize "公斤" over "公")
+        const sortedUnits = Object.keys(UNIT_ALIASES).sort((a, b) => b.length - a.length)
+        let foundUnit = ''
+        let nameStart = afterNum
+        for (const u of sortedUnits) {
+          if (afterNum.startsWith(u)) {
+            foundUnit = u
+            nameStart = afterNum.slice(u.length)
+            break
+          }
+        }
+        name = nameStart.trim()
+        rest = numMatch[1] + foundUnit
+      } else {
+        name = item
+        rest = ''
+      }
+    }
+    // Pattern C: "鸡胸肉500g" (name first, default)
+    else {
+      const nameMatch = item.match(/^([a-zA-Z\u4e00-\u9fff]+)/)
+      if (!nameMatch) return null
+      name = nameMatch[1]
+      rest = item.slice(name.length).trim()
+    }
     
     const qty = parseQuantity(rest)
     const category = detectCategory(name)
@@ -86,7 +142,7 @@ export function parseShoppingText(text: string): ParsedIngredient[] {
       category,
       defaultExpiryDays: DEFAULT_EXPIRY[category],
     }
-  }).filter((item): item is ParsedIngredient => item !== null)
+  }).filter((item): item is ParsedIngredient => item !== null && item.name.length > 0)
 }
 
 export async function parseWithAI(text: string, apiKey?: string): Promise<ParsedIngredient[]> {
