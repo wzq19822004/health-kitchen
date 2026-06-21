@@ -1,0 +1,261 @@
+[
+  {
+    "id": "breakfast-01", "name": "煮鸡蛋", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"鸡蛋","qty":"2个"}],
+    "steps": ["锅中加水没过鸡蛋","大火煮沸后转中火煮7分钟","捞出过凉水即可"],
+    "cookTime": 10, "nutrition": {"cal": 156, "protein": 13, "carb": 1, "fat": 11},
+    "tags": ["高蛋白","快手菜"], "emoji": "🥚", "source": "builtin"
+  },
+  {
+    "id": "breakfast-02", "name": "煎蛋", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"鸡蛋","qty":"2个"},{"name":"油","qty":"少许"}],
+    "steps": ["平底锅加热倒油","打入鸡蛋","中小火煎至蛋白凝固","翻面再煎30秒即可"],
+    "cookTime": 5, "nutrition": {"cal": 174, "protein": 13, "carb": 1, "fat": 13},
+    "tags": ["快手菜","高蛋白"], "emoji": "🍳", "source": "builtin"
+  },
+  {
+    "id": "breakfast-03", "name": "燕麦粥", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"燕麦片","qty":"50g"},{"name":"牛奶","qty":"200ml"},{"name":"蜂蜜","qty":"1勺"}],
+    "steps": ["将燕麦片和牛奶放入小锅","中小火煮3-5分钟至浓稠","关火加入蜂蜜搅匀即可"],
+    "cookTime": 8, "nutrition": {"cal": 280, "protein": 12, "carb": 40, "fat": 8},
+    "tags": ["快手菜","低脂"], "emoji": "🥣", "source": "builtin"
+  },
+  {
+    "id": "breakfast-04", "name": "小米粥", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"小米","qty":"80g"},{"name":"红枣","qty":"5颗"},{"name":"枸杞","qty":"少许"}],
+    "steps": ["小米淘洗干净","红枣去核切半","锅中加水煮沸后放入小米和红枣","转小火熬20分钟","撒枸杞再煮2分钟即可"],
+    "cookTime": 25, "nutrition": {"cal": 240, "protein": 6, "carb": 50, "fat": 3},
+    "tags": ["低脂","素食"], "emoji": "🥣", "source": "builtin"
+  },
+  {
+    "id": "breakfast-05", "name": "蒸红薯", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"红薯","qty":"1个（约200g）"}],
+    "steps": ["红薯洗净不去皮","切成滚刀块","蒸锅水开后放入","大火蒸15-20分钟至软烂即可"],
+    "cookTime": 20, "nutrition": {"cal": 180, "protein": 2, "carb": 42, "fat": 0},
+    "tags": ["低脂","素食","快手菜"], "emoji": "🍠", "source": "builtin"
+  },
+  {
+    "id": "breakfast-06", "name": "蒸玉米", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"玉米","qty":"1根"}],
+    "steps": ["玉米剥去外皮留一层内皮","蒸锅水开后放入","大火蒸15分钟即可"],
+    "cookTime": 18, "nutrition": {"cal": 150, "protein": 5, "carb": 32, "fat": 2},
+    "tags": ["低脂","素食","快手菜"], "emoji": "🌽", "source": "builtin"
+  },
+  {
+    "id": "breakfast-07", "name": "全麦三明治", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"全麦面包","qty":"2片"},{"name":"鸡蛋","qty":"1个"},{"name":"生菜","qty":"2片"},{"name":"火腿片","qty":"2片"}],
+    "steps": ["煎一个荷包蛋","面包片烤至微焦","依次叠放生菜、火腿、煎蛋","盖上另一片面包对切即可"],
+    "cookTime": 10, "nutrition": {"cal": 320, "protein": 18, "carb": 35, "fat": 12},
+    "tags": ["快手菜","高蛋白"], "emoji": "🥪", "source": "builtin"
+  },
+  {
+    "id": "breakfast-08", "name": "豆浆", "mealType": "早餐", "difficulty": 1,
+    "ingredients": [{"name":"黄豆","qty":"50g"},{"name":"糖","qty":"适量"}],
+    "steps": ["黄豆提前泡发6小时以上","放入豆浆机加800ml水","启动豆浆程序","打好后过滤豆渣","加糖调味即可"],
+    "cookTime": 25, "nutrition": {"cal": 140, "protein": 10, "carb": 12, "fat": 6},
+    "tags": ["素食","高蛋白"], "emoji": "🥛", "source": "builtin"
+  },
+  {
+    "id": "lunch-01", "name": "番茄炒蛋", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"番茄","qty":"2个"},{"name":"鸡蛋","qty":"3个"},{"name":"葱","qty":"1根"},{"name":"盐","qty":"适量"},{"name":"糖","qty":"少许"}],
+    "steps": ["番茄切块，鸡蛋打散加少许盐","热锅倒油，先炒鸡蛋至凝固盛出","锅中再倒少许油，炒番茄至出汁","加糖和盐调味，倒回鸡蛋翻炒均匀","撒葱花出锅"],
+    "cookTime": 15, "nutrition": {"cal": 220, "protein": 16, "carb": 10, "fat": 14},
+    "tags": ["快手菜"], "emoji": "🍅", "source": "builtin"
+  },
+  {
+    "id": "lunch-02", "name": "青椒肉丝", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"猪瘦肉","qty":"200g"},{"name":"青椒","qty":"3个"},{"name":"蒜","qty":"3瓣"},{"name":"生抽","qty":"1勺"},{"name":"淀粉","qty":"少许"}],
+    "steps": ["瘦肉切丝，加生抽和淀粉腌制10分钟","青椒切丝，蒜切片","热锅倒油滑炒肉丝至变色盛出","爆香蒜片，炒青椒至断生","倒回肉丝翻炒均匀，加盐调味即可"],
+    "cookTime": 20, "nutrition": {"cal": 280, "protein": 25, "carb": 8, "fat": 16},
+    "tags": ["高蛋白","快手菜"], "emoji": "🫑", "source": "builtin"
+  },
+  {
+    "id": "lunch-03", "name": "麻婆豆腐", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"嫩豆腐","qty":"1盒"},{"name":"猪肉末","qty":"100g"},{"name":"豆瓣酱","qty":"1勺"},{"name":"花椒粉","qty":"适量"},{"name":"葱","qty":"2根"}],
+    "steps": ["豆腐切小块，焯水去腥","热锅倒油，炒肉末至变色","加豆瓣酱炒出红油","加半碗水烧开，放入豆腐","小火煮5分钟入味，水淀粉勾芡","撒花椒粉和葱花即可"],
+    "cookTime": 20, "nutrition": {"cal": 310, "protein": 22, "carb": 12, "fat": 20},
+    "tags": ["下饭菜"], "emoji": "🫘", "source": "builtin"
+  },
+  {
+    "id": "lunch-04", "name": "蒜蓉西蓝花", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"西蓝花","qty":"1颗"},{"name":"蒜","qty":"5瓣"},{"name":"盐","qty":"适量"},{"name":"蚝油","qty":"少许"}],
+    "steps": ["西蓝花掰小朵，盐水浸泡10分钟后洗净","烧一锅水，西蓝花焯水2分钟捞出","蒜切蓉","热锅倒油，爆香蒜蓉","放入西蓝花快速翻炒","加蚝油和盐调味即可"],
+    "cookTime": 15, "nutrition": {"cal": 120, "protein": 8, "carb": 15, "fat": 4},
+    "tags": ["低脂","素食","快手菜"], "emoji": "🥦", "source": "builtin"
+  },
+  {
+    "id": "lunch-05", "name": "手撕包菜", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"包菜","qty":"半个"},{"name":"干辣椒","qty":"3个"},{"name":"蒜","qty":"3瓣"},{"name":"醋","qty":"1勺"},{"name":"生抽","qty":"1勺"}],
+    "steps": ["包菜手撕成小片，洗净沥干","干辣椒切段，蒜切片","热锅倒油，爆香辣椒和蒜","大火放入包菜快速翻炒至变软","沿锅边淋醋，加生抽和盐","翻炒均匀即可出锅"],
+    "cookTime": 10, "nutrition": {"cal": 90, "protein": 3, "carb": 12, "fat": 4},
+    "tags": ["快手菜","低脂","素食"], "emoji": "🥬", "source": "builtin"
+  },
+  {
+    "id": "lunch-06", "name": "醋溜白菜", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"白菜","qty":"300g"},{"name":"干辣椒","qty":"2个"},{"name":"醋","qty":"1勺"},{"name":"蒜","qty":"3瓣"}],
+    "steps": ["白菜洗净切片，菜帮和菜叶分开","干辣椒切段，蒜切片","热锅倒油爆香辣椒和蒜","先炒菜帮1分钟，再放菜叶","加醋和盐快速翻炒即可"],
+    "cookTime": 8, "nutrition": {"cal": 60, "protein": 2, "carb": 8, "fat": 3},
+    "tags": ["快手菜","低脂","素食"], "emoji": "🥬", "source": "builtin"
+  },
+  {
+    "id": "lunch-07", "name": "鱼香肉丝", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"猪瘦肉","qty":"200g"},{"name":"木耳","qty":"50g"},{"name":"胡萝卜","qty":"半根"},{"name":"青椒","qty":"1个"},{"name":"豆瓣酱","qty":"1勺"},{"name":"醋","qty":"1勺"},{"name":"糖","qty":"1勺"}],
+    "steps": ["肉切丝，加料酒和淀粉腌制","木耳泡发切丝，胡萝卜和青椒切丝","调鱼香汁：醋、糖、生抽、淀粉拌匀","热锅滑炒肉丝至变色盛出","爆香豆瓣酱，炒胡萝卜和木耳","倒回肉丝和青椒丝","淋入鱼香汁快速翻炒即可"],
+    "cookTime": 25, "nutrition": {"cal": 340, "protein": 26, "carb": 18, "fat": 18},
+    "tags": ["下饭菜"], "emoji": "🥢", "source": "builtin"
+  },
+  {
+    "id": "lunch-08", "name": "地三鲜", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"茄子","qty":"1根"},{"name":"土豆","qty":"1个"},{"name":"青椒","qty":"2个"},{"name":"蒜","qty":"3瓣"},{"name":"生抽","qty":"1勺"}],
+    "steps": ["茄子切块，土豆切片，青椒切块","土豆和茄子分别炸至金黄捞出","留底油爆香蒜末","放入青椒翻炒，再倒入茄子和土豆","加生抽和盐调味翻炒均匀即可"],
+    "cookTime": 25, "nutrition": {"cal": 280, "protein": 6, "carb": 35, "fat": 14},
+    "tags": ["素食","下饭菜"], "emoji": "🍆", "source": "builtin"
+  },
+  {
+    "id": "lunch-09", "name": "干煸四季豆", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"四季豆","qty":"300g"},{"name":"干辣椒","qty":"5个"},{"name":"花椒","qty":"少许"},{"name":"蒜","qty":"3瓣"},{"name":"盐","qty":"适量"}],
+    "steps": ["四季豆去筋掰成小段","热锅多油，中小火煸炒四季豆至表面起皱","盛出四季豆，留底油","爆香干辣椒、花椒和蒜末","倒入四季豆翻炒，加盐调味即可"],
+    "cookTime": 20, "nutrition": {"cal": 150, "protein": 6, "carb": 14, "fat": 8},
+    "tags": ["素食","下饭菜"], "emoji": "🫘", "source": "builtin"
+  },
+  {
+    "id": "lunch-10", "name": "香菇油菜", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"香菇","qty":"8朵"},{"name":"油菜","qty":"300g"},{"name":"蒜","qty":"3瓣"},{"name":"蚝油","qty":"1勺"}],
+    "steps": ["香菇切片，油菜洗净焯水沥干","热锅倒油爆香蒜末","先炒香菇至出香味","放入油菜翻炒","加蚝油和盐调味即可"],
+    "cookTime": 12, "nutrition": {"cal": 100, "protein": 5, "carb": 10, "fat": 4},
+    "tags": ["快手菜","低脂","素食"], "emoji": "🍄", "source": "builtin"
+  },
+  {
+    "id": "lunch-11", "name": "木须肉", "mealType": "午餐", "difficulty": 2,
+    "ingredients": [{"name":"猪瘦肉","qty":"150g"},{"name":"鸡蛋","qty":"2个"},{"name":"木耳","qty":"50g"},{"name":"黄瓜","qty":"半根"},{"name":"黄花菜","qty":"少许"}],
+    "steps": ["肉切片腌制，鸡蛋打散，木耳泡发撕小朵","热锅炒鸡蛋盛出","滑炒肉片至变色盛出","爆香葱姜，炒木耳和黄花菜","倒回肉片和鸡蛋，加黄瓜片","加盐和生抽调味翻炒即可"],
+    "cookTime": 20, "nutrition": {"cal": 300, "protein": 24, "carb": 10, "fat": 18},
+    "tags": ["高蛋白","下饭菜"], "emoji": "🥢", "source": "builtin"
+  },
+  {
+    "id": "lunch-12", "name": "蒜苔炒肉", "mealType": "午餐", "difficulty": 1,
+    "ingredients": [{"name":"蒜苔","qty":"200g"},{"name":"猪瘦肉","qty":"150g"},{"name":"生抽","qty":"1勺"},{"name":"姜","qty":"少许"}],
+    "steps": ["蒜苔切段，肉切丝腌制","热锅滑炒肉丝至变色盛出","爆香姜丝","炒蒜苔至深绿色变软","倒回肉丝翻炒，加生抽和盐即可"],
+    "cookTime": 15, "nutrition": {"cal": 240, "protein": 20, "carb": 12, "fat": 13},
+    "tags": ["快手菜","高蛋白"], "emoji": "🥢", "source": "builtin"
+  },
+  {
+    "id": "dinner-01", "name": "清蒸鲈鱼", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"鲈鱼","qty":"1条（约500g）"},{"name":"姜","qty":"1块"},{"name":"葱","qty":"2根"},{"name":"蒸鱼豉油","qty":"2勺"}],
+    "steps": ["鱼处理干净，两面划刀","姜切片塞入鱼肚和刀口中","蒸锅水开后放入鱼大火蒸8分钟","倒掉盘中蒸出的汁水","铺上葱丝，淋蒸鱼豉油","泼一勺热油激香即可"],
+    "cookTime": 15, "nutrition": {"cal": 220, "protein": 38, "carb": 2, "fat": 6},
+    "tags": ["高蛋白","低脂"], "emoji": "🐟", "source": "builtin"
+  },
+  {
+    "id": "dinner-02", "name": "红烧鸡块", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"鸡腿","qty":"3个"},{"name":"土豆","qty":"1个"},{"name":"姜","qty":"1块"},{"name":"八角","qty":"2个"},{"name":"生抽","qty":"2勺"},{"name":"老抽","qty":"少许"},{"name":"冰糖","qty":"几块"}],
+    "steps": ["鸡腿剁块焯水去血沫","土豆切块","热锅倒油炒糖色","放入鸡块翻炒上色","加姜片、八角爆香","加水没过鸡块，加生抽老抽","大火烧开转小火炖15分钟","加土豆再炖10分钟，收汁即可"],
+    "cookTime": 35, "nutrition": {"cal": 420, "protein": 32, "carb": 20, "fat": 24},
+    "tags": ["下饭菜","高蛋白"], "emoji": "🍗", "source": "builtin"
+  },
+  {
+    "id": "dinner-03", "name": "可乐鸡翅", "mealType": "晚餐", "difficulty": 1,
+    "ingredients": [{"name":"鸡翅中","qty":"8个"},{"name":"可乐","qty":"1罐"},{"name":"姜","qty":"少许"},{"name":"生抽","qty":"1勺"},{"name":"老抽","qty":"少许"}],
+    "steps": ["鸡翅正反面划两刀，焯水去血沫","热锅倒油煎鸡翅至两面金黄","加姜片、生抽、老抽翻炒","倒入可乐没过鸡翅","大火烧开后转中小火炖15分钟","转大火收汁至浓稠即可"],
+    "cookTime": 30, "nutrition": {"cal": 380, "protein": 28, "carb": 25, "fat": 18},
+    "tags": ["快手菜","高蛋白"], "emoji": "🍗", "source": "builtin"
+  },
+  {
+    "id": "dinner-04", "name": "番茄牛腩", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"牛腩","qty":"500g"},{"name":"番茄","qty":"3个"},{"name":"姜","qty":"1块"},{"name":"番茄酱","qty":"1勺"},{"name":"料酒","qty":"1勺"}],
+    "steps": ["牛腩切块焯水去血沫","番茄去皮切块","热锅倒油炒番茄至出汁","加番茄酱翻炒，放入牛腩","加水没过食材，加姜片和料酒","大火烧开转小火炖1.5小时","加盐调味，撒葱花即可"],
+    "cookTime": 100, "nutrition": {"cal": 450, "protein": 40, "carb": 15, "fat": 25},
+    "tags": ["高蛋白","下饭菜"], "emoji": "🐂", "source": "builtin"
+  },
+  {
+    "id": "dinner-05", "name": "回锅肉", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"五花肉","qty":"250g"},{"name":"蒜苗","qty":"3根"},{"name":"豆瓣酱","qty":"1勺"},{"name":"姜","qty":"少许"},{"name":"料酒","qty":"1勺"}],
+    "steps": ["五花肉整块下锅加料酒煮20分钟","捞出放凉切薄片","蒜苗斜切段","热锅不放油，煸炒肉片至微卷出油","加豆瓣酱炒出红油","加蒜苗翻炒至断生即可"],
+    "cookTime": 35, "nutrition": {"cal": 420, "protein": 18, "carb": 6, "fat": 36},
+    "tags": ["下饭菜"], "emoji": "🥩", "source": "builtin"
+  },
+  {
+    "id": "dinner-06", "name": "葱爆羊肉", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"羊肉片","qty":"300g"},{"name":"大葱","qty":"2根"},{"name":"孜然","qty":"适量"},{"name":"生抽","qty":"1勺"},{"name":"料酒","qty":"1勺"}],
+    "steps": ["羊肉片加料酒和生抽腌制10分钟","大葱斜切丝","热锅倒多油","大火快炒羊肉至变色立即盛出","留底油炒葱丝至微软","倒回羊肉，撒孜然粉和盐","大火翻炒均匀即可"],
+    "cookTime": 10, "nutrition": {"cal": 350, "protein": 30, "carb": 6, "fat": 22},
+    "tags": ["快手菜","高蛋白"], "emoji": "🐑", "source": "builtin"
+  },
+  {
+    "id": "dinner-07", "name": "腐竹烧肉", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"五花肉","qty":"200g"},{"name":"腐竹","qty":"100g"},{"name":"生抽","qty":"1勺"},{"name":"老抽","qty":"少许"},{"name":"八角","qty":"1个"},{"name":"冰糖","qty":"少许"}],
+    "steps": ["腐竹提前泡发切段","五花肉切块焯水","热锅炒糖色，放入肉块翻炒","加生抽老抽和八角","加水没过肉块，炖20分钟","加腐竹再炖10分钟","收汁即可"],
+    "cookTime": 40, "nutrition": {"cal": 400, "protein": 22, "carb": 12, "fat": 30},
+    "tags": ["下饭菜"], "emoji": "🥢", "source": "builtin"
+  },
+  {
+    "id": "dinner-08", "name": "冬瓜排骨汤", "mealType": "晚餐", "difficulty": 1,
+    "ingredients": [{"name":"排骨","qty":"400g"},{"name":"冬瓜","qty":"500g"},{"name":"姜","qty":"1块"},{"name":"枸杞","qty":"少许"},{"name":"料酒","qty":"1勺"}],
+    "steps": ["排骨焯水去血沫","冬瓜去皮切厚片","锅中加水放入排骨、姜片和料酒","大火烧开转小火炖40分钟","放入冬瓜再炖15分钟","加枸杞和盐调味即可"],
+    "cookTime": 60, "nutrition": {"cal": 300, "protein": 28, "carb": 8, "fat": 18},
+    "tags": ["低脂","高蛋白"], "emoji": "🍲", "source": "builtin"
+  },
+  {
+    "id": "dinner-09", "name": "清炖鸡汤", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"鸡","qty":"半只"},{"name":"姜","qty":"1块"},{"name":"红枣","qty":"5颗"},{"name":"枸杞","qty":"少许"},{"name":"料酒","qty":"1勺"}],
+    "steps": ["鸡剁块焯水去血沫","放入砂锅加足量水","加姜片和料酒","大火烧开撇去浮沫","转小火炖1小时","加红枣和枸杞再炖15分钟","加盐调味即可"],
+    "cookTime": 80, "nutrition": {"cal": 350, "protein": 32, "carb": 5, "fat": 22},
+    "tags": ["高蛋白"], "emoji": "🍲", "source": "builtin"
+  },
+  {
+    "id": "dinner-10", "name": "蒜蓉蒸虾", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"大虾","qty":"12只"},{"name":"蒜","qty":"1头"},{"name":"粉丝","qty":"少许"},{"name":"蒸鱼豉油","qty":"1勺"}],
+    "steps": ["虾开背去虾线","蒜切蓉，粉丝泡软铺盘底","摆上虾，撒蒜蓉","蒸锅水开后放入蒸5分钟","淋蒸鱼豉油","泼一勺热油即可"],
+    "cookTime": 15, "nutrition": {"cal": 240, "protein": 30, "carb": 8, "fat": 10},
+    "tags": ["快手菜","高蛋白","低脂"], "emoji": "🦐", "source": "builtin"
+  },
+  {
+    "id": "dinner-11", "name": "水煮鱼片", "mealType": "晚餐", "difficulty": 3,
+    "ingredients": [{"name":"草鱼","qty":"1条（约600g）"},{"name":"豆芽","qty":"200g"},{"name":"干辣椒","qty":"10个"},{"name":"花椒","qty":"适量"},{"name":"豆瓣酱","qty":"1勺"},{"name":"蛋清","qty":"1个"}],
+    "steps": ["鱼片成薄片，加蛋清和淀粉腌制","豆芽焯水铺碗底","热锅炒豆瓣酱至出红油","加水烧开，滑入鱼片煮至变白","连汤倒入铺豆芽的碗中","撒干辣椒段和花椒，泼热油即可"],
+    "cookTime": 30, "nutrition": {"cal": 380, "protein": 36, "carb": 8, "fat": 22},
+    "tags": ["高蛋白","下饭菜"], "emoji": "🐟", "source": "builtin"
+  },
+  {
+    "id": "dinner-12", "name": "糖醋里脊", "mealType": "晚餐", "difficulty": 2,
+    "ingredients": [{"name":"猪里脊","qty":"300g"},{"name":"番茄酱","qty":"2勺"},{"name":"醋","qty":"1勺"},{"name":"糖","qty":"1勺"},{"name":"淀粉","qty":"适量"},{"name":"鸡蛋","qty":"1个"}],
+    "steps": ["里脊切条，加盐和料酒腌制","调面糊：鸡蛋、淀粉、水","肉条裹面糊，炸至金黄捞出","调糖醋汁：番茄酱、醋、糖、水","锅中倒糖醋汁烧开","倒入炸好的肉条快速裹匀即可"],
+    "cookTime": 25, "nutrition": {"cal": 380, "protein": 28, "carb": 30, "fat": 16},
+    "tags": ["高蛋白"], "emoji": "🥩", "source": "builtin"
+  },
+  {
+    "id": "snack-01", "name": "水果拼盘", "mealType": "加餐", "difficulty": 1,
+    "ingredients": [{"name":"苹果","qty":"1个"},{"name":"香蕉","qty":"1根"},{"name":"火龙果","qty":"半个"}],
+    "steps": ["水果洗净去皮切块","摆盘即可"],
+    "cookTime": 5, "nutrition": {"cal": 120, "protein": 2, "carb": 28, "fat": 0},
+    "tags": ["快手菜","低脂","素食"], "emoji": "🍎", "source": "builtin"
+  },
+  {
+    "id": "snack-02", "name": "酸奶坚果杯", "mealType": "加餐", "difficulty": 1,
+    "ingredients": [{"name":"酸奶","qty":"200ml"},{"name":"坚果","qty":"30g"},{"name":"蜂蜜","qty":"少许"}],
+    "steps": ["酸奶倒入碗中","撒上坚果","淋蜂蜜即可"],
+    "cookTime": 3, "nutrition": {"cal": 250, "protein": 10, "carb": 20, "fat": 15},
+    "tags": ["快手菜"], "emoji": "🥛", "source": "builtin"
+  },
+  {
+    "id": "snack-03", "name": "紫菜蛋花汤", "mealType": "加餐", "difficulty": 1,
+    "ingredients": [{"name":"紫菜","qty":"少许"},{"name":"鸡蛋","qty":"1个"},{"name":"虾皮","qty":"少许"},{"name":"葱","qty":"1根"},{"name":"香油","qty":"几滴"}],
+    "steps": ["锅中加水烧开","放入紫菜和虾皮","鸡蛋打散淋入锅中搅成蛋花","加盐调味，撒葱花","滴几滴香油即可"],
+    "cookTime": 8, "nutrition": {"cal": 80, "protein": 8, "carb": 3, "fat": 4},
+    "tags": ["快手菜","低脂"], "emoji": "🥣", "source": "builtin"
+  },
+  {
+    "id": "snack-04", "name": "番茄蛋汤", "mealType": "加餐", "difficulty": 1,
+    "ingredients": [{"name":"番茄","qty":"1个"},{"name":"鸡蛋","qty":"1个"},{"name":"葱","qty":"1根"},{"name":"盐","qty":"适量"}],
+    "steps": ["番茄切块","锅中倒油炒番茄至出汁","加两碗水烧开","鸡蛋打散淋入锅中","加盐调味，撒葱花即可"],
+    "cookTime": 10, "nutrition": {"cal": 100, "protein": 7, "carb": 6, "fat": 5},
+    "tags": ["快手菜","低脂"], "emoji": "🍅", "source": "builtin"
+  },
+  {
+    "id": "snack-05", "name": "银耳莲子羹", "mealType": "加餐", "difficulty": 2,
+    "ingredients": [{"name":"银耳","qty":"半朵"},{"name":"莲子","qty":"20g"},{"name":"红枣","qty":"5颗"},{"name":"冰糖","qty":"适量"}],
+    "steps": ["银耳泡发撕小朵，莲子泡发","锅中加足量水","放入银耳和莲子大火烧开","转小火炖40分钟至银耳出胶","加红枣和冰糖再炖15分钟即可"],
+    "cookTime": 60, "nutrition": {"cal": 150, "protein": 3, "carb": 35, "fat": 0},
+    "tags": ["低脂","素食"], "emoji": "🥣", "source": "builtin"
+  }
+]
