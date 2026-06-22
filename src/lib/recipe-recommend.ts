@@ -17,14 +17,37 @@ export function getRecipeCookCount(mealLogs: MealLog[], recipeId: string): numbe
 export function getLastCookedDay(mealLogs: MealLog[], recipeId: string): number | null {
   const logs = mealLogs.filter(l => l.recipeId === recipeId && l.cooked).sort((a, b) => b.cookedAt!.localeCompare(a.cookedAt!))
   if (!logs.length) return null
-  const days = Math.floor((Date.now() - new Date(logs[0].cookedAt!).getTime()) / 86400000)
-  return days
+  return Math.floor((Date.now() - new Date(logs[0].cookedAt!).getTime()) / 86400000)
+}
+
+/** Count how many recipe ingredients are available in stock */
+export function getIngredientMatch(
+  recipe: Recipe,
+  ingredients: Ingredient[]
+): { match: number; total: number; missing: string[]; pct: number } {
+  const ingNames = ingredients.map(i => i.name.toLowerCase())
+  // Check main ingredients (skip salt/oil/seasonings)
+  const mains = recipe.ingredients.filter(i => {
+    const n = i.name.toLowerCase()
+    return !['盐','糖','油','生抽','老抽','醋','料酒','蚝油','豆瓣酱','番茄酱','蜂蜜','香油','花椒','八角','桂皮','姜','蒜','葱','辣椒','淀粉','水'].includes(n)
+  })
+  const matched: string[] = []
+  const missing: string[] = []
+  for (const ri of mains) {
+    const found = ingNames.some(n => n.includes(ri.name) || ri.name.includes(n))
+    if (found) matched.push(ri.name)
+    else missing.push(ri.name)
+  }
+  return {
+    match: matched.length,
+    total: mains.length,
+    missing,
+    pct: mains.length === 0 ? 100 : Math.round(matched.length / mains.length * 100),
+  }
 }
 
 function hasIngredients(recipe: Recipe, ingredients: Ingredient[]): boolean {
-  const ingNames = ingredients.map(i => i.name.toLowerCase())
-  const mainIngs = recipe.ingredients.slice(0, 3)
-  return mainIngs.some(ri => ingNames.some(n => n.includes(ri.name) || ri.name.includes(n)))
+  return getIngredientMatch(recipe, ingredients).match >= Math.min(1, recipe.ingredients.length)
 }
 
 export function generateDailyMenu(
@@ -33,13 +56,11 @@ export function generateDailyMenu(
   mealLogs: MealLog[],
   difficultyLimit: 1 | 2 | 3 = 2,
 ): DailyMenu {
-  // Try ingredient-matching first; fallback to difficulty-only
   let eligible = recipes.filter(r => {
     if (r.difficulty > difficultyLimit) return false
     if (r.source === 'builtin' && !hasIngredients(r, ingredients)) return false
     return true
   })
-  // Fallback: if no recipes match ingredients, show difficulty-filtered picks
   if (eligible.length === 0) {
     eligible = recipes.filter(r => r.difficulty <= difficultyLimit)
   }
@@ -47,7 +68,10 @@ export function generateDailyMenu(
   const scored = eligible.map(r => {
     const cookedCount = getRecipeCookCount(mealLogs, r.id)
     const lastCooked = getLastCookedDay(mealLogs, r.id)
+    const match = getIngredientMatch(r, ingredients)
     let score = Math.random() * 10
+    // Higher ingredient match = higher score
+    score += match.pct / 10
     if (cookedCount === 0) score += 8
     else if (lastCooked !== null && lastCooked > 7) score += 5
     else if (cookedCount < 3) score += 2

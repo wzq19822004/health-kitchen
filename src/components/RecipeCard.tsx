@@ -8,9 +8,10 @@ interface Props {
   onClick: () => void
   cookedCount?: number
   lastCooked?: string
+  matchInfo?: { match: number; total: number; missing: string[]; pct: number }
 }
 
-export default function RecipeCard({ recipe, onClick, cookedCount = 0, lastCooked }: Props) {
+export default function RecipeCard({ recipe, onClick, cookedCount = 0, lastCooked, matchInfo }: Props) {
   return (
     <div onClick={onClick}
       className="bg-white rounded-xl overflow-hidden transition-all cursor-pointer active:scale-[0.98]"
@@ -43,7 +44,15 @@ export default function RecipeCard({ recipe, onClick, cookedCount = 0, lastCooke
           <span>{recipe.nutrition.protein}g蛋白 · {recipe.nutrition.carb}g碳水</span>
         </div>
       </div>
-      {/* Meta footer */}
+      {/* Match badge */}
+      {matchInfo && matchInfo.total > 0 && (
+        <div className="px-3.5 py-2" style={{borderTop:'1px solid #E0DDD4'}}>
+          <span className={"tag " + (matchInfo.match >= matchInfo.total ? 'tag-green' : matchInfo.match > 0 ? 'tag-orange' : 'tag-red')}>
+            {matchInfo.match >= matchInfo.total ? '✅ 食材齐全' : matchInfo.match > 0 ? '⚠️ 缺' + matchInfo.missing.length + '种食材' : '❌ 缺' + matchInfo.missing.length + '种食材'}
+          </span>
+        </div>
+      )}
+      {/* Cooked footer */}
       {cookedCount > 0 && (
         <div className="flex items-center justify-between"
           style={{

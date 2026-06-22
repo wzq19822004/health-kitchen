@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
-import { getAllRecipes, getRecipeCookCount, getLastCookedDay, getCookedIds } from '../lib/recipe-recommend'
+import { getAllRecipes, getRecipeCookCount, getLastCookedDay, getCookedIds, getIngredientMatch } from '../lib/recipe-recommend'
 import RecipeCard from '../components/RecipeCard'
 import RecipeDetailModal from '../components/RecipeDetailModal'
 import { genId } from '../data/storage'
@@ -15,6 +15,7 @@ export default function Recipes() {
   const [mealFilter, setMealFilter] = useState<string>('全部')
   const [diffFilter, setDiffFilter] = useState(0) // 0=all, 1=simple, 2=medium
   const [hideCooked, setHideCooked] = useState(false)
+  const [matchFilter, setMatchFilter] = useState('all') // all | can_make | missing
   const [detail, setDetail] = useState<Recipe | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ name: '', mealType: '午餐' as MealType, difficulty: 1 as Difficulty, cookTime: 15, ingredients: '' as string, steps: '' as string, tags: '' as string, emoji: '🍽️' })
@@ -27,8 +28,10 @@ export default function Recipes() {
     if (mealFilter !== '全部') list = list.filter(r => r.mealType === mealFilter)
     if (diffFilter > 0) list = list.filter(r => r.difficulty === diffFilter)
     if (hideCooked) list = list.filter(r => !cookedIds.has(r.id))
+    if (matchFilter === 'can_make') list = list.filter(r => getIngredientMatch(r, data.ingredients).total > 0 && getIngredientMatch(r, data.ingredients).match >= getIngredientMatch(r, data.ingredients).total)
+    if (matchFilter === 'missing') list = list.filter(r => getIngredientMatch(r, data.ingredients).total > 0 && getIngredientMatch(r, data.ingredients).match < getIngredientMatch(r, data.ingredients).total)
     return list
-  }, [allRecipes, mealFilter, diffFilter, hideCooked, cookedIds])
+  }, [allRecipes, mealFilter, diffFilter, hideCooked, cookedIds, matchFilter, data.ingredients])
 
   function saveCustom() {
     if (!form.name.trim()) return
@@ -75,6 +78,11 @@ export default function Recipes() {
         <select value={diffFilter} onChange={e => setDiffFilter(Number(e.target.value))} className="text-xs border border-warm-200 rounded-lg p-1.5 bg-white text-gray-600">
           {DIFF_LABELS.map((l, i) => <option key={i} value={i}>{l}</option>)}
         </select>
+        <select value={matchFilter} onChange={e => setMatchFilter(e.target.value)} className="text-xs border border-warm-200 rounded-lg p-1.5 bg-white text-gray-600">
+          <option value="all">全部</option>
+          <option value="can_make">🟢 可做</option>
+          <option value="missing">🟡 缺食材</option>
+        </select>
         <label className="flex items-center gap-1.5 text-xs text-gray-600">
           <input type="checkbox" checked={hideCooked} onChange={e => setHideCooked(e.target.checked)} className="rounded" />
           隐藏已做
@@ -97,6 +105,7 @@ export default function Recipes() {
                 onClick={() => setDetail(r)}
                 cookedCount={cc}
                 lastCooked={lc !== null ? `${lc}天前` : undefined}
+                matchInfo={getIngredientMatch(r, data.ingredients)}
               />
             </div>
           )

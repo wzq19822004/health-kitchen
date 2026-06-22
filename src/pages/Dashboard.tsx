@@ -5,7 +5,6 @@ import RecipeCard from '../components/RecipeCard'
 import RecipeDetailModal from '../components/RecipeDetailModal'
 import { daysUntil, createMealLog } from '../data/storage'
 import { UTENSILS } from '../data/utensils'
-import { HEALTH_TIPS } from '../data/health-tips'
 import type { Recipe, DailyMenu } from '../types'
 
 const UTENSIL_KEY = 'hk_utensils'
@@ -22,7 +21,6 @@ export default function Dashboard() {
   const [detail, setDetail] = useState<Recipe | null>(null)
   const [menu, setMenu] = useState<DailyMenu | null>(data.currentMenu)
   const [ownedUtensils, setOwnedUtensils] = useState<string[]>(loadUtensils)
-  const [selectedTip, setSelectedTip] = useState(0)
   const [toast, setToast] = useState({ show: false, msg: '' })
   const [activeMeal, setActiveMeal] = useState('breakfast')
 
@@ -38,8 +36,6 @@ export default function Dashboard() {
 
   useEffect(() => { saveUtensils(ownedUtensils) }, [ownedUtensils])
   useEffect(() => {
-    const iv = setInterval(() => setSelectedTip(i => (i + 1) % Math.min(HEALTH_TIPS.length, 4)), 8000)
-    return () => clearInterval(iv)
   }, [])
 
   function showToast(msg: string) {
@@ -192,29 +188,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Health Tips */}
-      <div className="section-card">
-        <div className="section-header">
-          <h2><span>🌿</span> 科学养生健康知识</h2>
-          <span className="tag tag-green">📚 基于最新科研</span>
-        </div>
-        <div className="section-body">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {HEALTH_TIPS.slice(0, 4).map((t, i) => {
-              const bg = { green: 'linear-gradient(135deg,#E8F5D8,#D0EBB0)', blue: 'linear-gradient(135deg,#EBF5FB,#CCE4F7)', orange: 'linear-gradient(135deg,#FEF9E7,#FDEBD0)', purple: 'linear-gradient(135deg,#F5EEF8,#E8DAEF)', red: 'linear-gradient(135deg,#FDEDEC,#FADBD8)', teal: 'linear-gradient(135deg,#E8F8F5,#C8EBE4)' }[t.color] || 'linear-gradient(135deg,#E8F5D8,#D0EBB0)'
-              return (
-                <div key={t.id} className={`rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${i === selectedTip ? 'ring-2 ring-green-dark scale-[1.02]' : ''}`}
-                  style={{background: bg}}>
-                  <div className="text-2xl mb-2">{t.icon}</div>
-                  <h3 className="text-sm font-bold mb-1.5">{t.title}</h3>
-                  <p className="text-xs leading-relaxed opacity-80">{t.body}</p>
-                  <div className="text-[10px] opacity-50 mt-2 flex items-center gap-1">📖 {t.source}</div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
 
       {/* ===== 补货与食谱建议 ===== */}
       <div className="section-card">

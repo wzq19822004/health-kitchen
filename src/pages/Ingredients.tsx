@@ -27,7 +27,8 @@ export default function Ingredients() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<FormData>(emptyForm())
   const [pasteText, setPasteText] = useState('')
-  const [parseResult, setParseResult] = useState<{name: string; qty: string; cat: string}[] | null>(null)
+  const [showBatch, setShowBatch] = useState(false)
+  const [parseResult, setParseResult] = useState<{name: string; quantity: number; unit: string; category: string; defaultExpiryDays: number}[] | null>(null)
 
   const filtered = useMemo(() => {
     let list = data.ingredients
@@ -39,29 +40,32 @@ export default function Ingredients() {
     if (!pasteText.trim()) return
     const parsed = parseShoppingText(pasteText)
     setParseResult(parsed.map(p => ({
-      name: p.name, qty: `${p.quantity}${p.unit}`, cat: p.category
+      name: p.name, quantity: p.quantity, unit: p.unit,
+      category: p.category, defaultExpiryDays: p.defaultExpiryDays,
     })))
   }
 
   function confirmParse() {
     if (!parseResult) return
-    // Aggregate duplicate names & merge with existing
-    const merged = new Map<string, { quantity: number; unit: string; category: string }>()
+    // Aggregate duplicate names
+    const merged = new Map<string, { quantity: number; unit: string; category: string; days: number }>()
     for (const item of parseResult) {
       const prev = merged.get(item.name)
-      const qtyNum = parseInt(item.qty.match(/\d+/)?.[0] || "0")
       if (prev) {
-        prev.quantity += qtyNum
+        prev.quantity += item.quantity
+        prev.days = Math.min(prev.days, item.defaultExpiryDays)
       } else {
-        merged.set(item.name, { quantity: qtyNum, unit: item.qty.replace(/\d+/g, "") || "g", category: item.cat })
+        merged.set(item.name, { quantity: item.quantity, unit: item.unit, category: item.category, days: item.defaultExpiryDays })
       }
     }
+    const today = new Date()
     for (const [name, info] of merged) {
       const existing = data.ingredients.find(i => i.name === name)
+      const expiryDate = new Date(today.getTime() + info.days * 86400000).toISOString().split('T')[0]
       if (existing) {
         updateIngredient(existing.id, { quantity: existing.quantity + info.quantity, updatedAt: now() })
       } else {
-        addIngredient(createIngredient(name, info.category as IngredientCategory, info.quantity, info.unit as Unit, 0))
+        addIngredient(createIngredient(name, info.category as IngredientCategory, info.quantity, info.unit as Unit, 0, expiryDate))
       }
     }
     setPasteText('')
@@ -143,25 +147,36 @@ export default function Ingredients() {
         <button onClick={openAdd} className="text-sm bg-mint-500 text-white px-4 py-1.5 rounded-lg font-medium hover:bg-mint-600">+ 添加</button>
       </div>
 
-      {/* Paste NLP input */}
-      <div className="bg-white rounded-xl p-3 shadow-sm">
-        <textarea
-          value={pasteText}
-          onChange={e => setPasteText(e.target.value)}
-          placeholder="📋 粘贴购物清单：鸡胸肉500g 西兰花1颗 鸡蛋1板 牛奶1L"
-          className="w-full text-sm border border-warm-200 rounded-lg p-2.5 resize-none h-16 focus:outline-none focus:border-mint-400"
-        />
-        <button onClick={handlePaste} disabled={!pasteText.trim()} className="mt-2 text-xs bg-mint-500 text-white px-3 py-1.5 rounded-lg font-medium hover:bg-mint-600 disabled:opacity-50">🔍 解析</button>
-        {parseResult && (
-          <div className="mt-2 bg-mint-50 rounded-lg p-3">
-            <div className="text-xs font-bold text-mint-700 mb-1">解析结果：</div>
-            {parseResult.map((item, i) => (
-              <div key={i} className="text-xs text-gray-700">{CAT_ICONS[item.cat] || '📦'} {item.name} × {item.qty}</div>
-            ))}
-            <div className="flex gap-2 mt-2">
-              <button onClick={confirmParse} className="text-xs bg-mint-600 text-white px-3 py-1 rounded-lg">✅ 确认入库</button>
-              <button onClick={() => setParseResult(null)} className="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-lg">取消</button>
-            </div>
+      {/* Batch add toggle */}
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm">
+        <button onClick={() => setShowBatch(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+          <span>📋 批量添加食材</span>
+          <span className={`text-gray-400 transition-transform ${showBatch ? 'rotate-180' : ''}`}>▼</span>
+        </button>
+        {showBatch && (
+          <div className="px-4 pb-4 border-t border-warm-200 pt-3">
+            <textarea
+              value={pasteText}
+              onChange={e => setPasteText(e.target.value)}
+              placeholder="粘贴购物清单：鸡胸肉500g 西兰花1颗 鸡蛋1板 牛奶1L"
+              className="w-full text-sm border border-warm-200 rounded-lg p-2.5 resize-none h-20 focus:outline-none focus:border-mint-400"
+            />
+            <p className="text-xs text-gray-400 mt-1 mb-2">支持「5个苹果」「番茄x3」「鸡翅 500g」等常见格式</p>
+            <button onClick={handlePaste} disabled={!pasteText.trim()}
+              className="text-sm bg-mint-500 text-white px-4 py-1.5 rounded-lg font-medium hover:bg-mint-600 disabled:opacity-50 transition">🔍 解析</button>
+            {parseResult && (
+              <div className="mt-3 bg-mint-50 rounded-lg p-3">
+                <div className="text-xs font-bold text-mint-700 mb-1.5">📋 解析结果（共 {parseResult.length} 项）：</div>
+                {parseResult.map((item, i) => (
+                  <div key={i} className="text-xs text-gray-700 py-0.5">{CAT_ICONS[item.category] || '📦'} {item.name} × {item.quantity}{item.unit}</div>
+                ))}
+                <div className="flex gap-2 mt-2.5">
+                  <button onClick={confirmParse} className="text-sm bg-mint-600 text-white px-4 py-1.5 rounded-lg font-medium hover:bg-mint-700 transition">✅ 确认入库</button>
+                  <button onClick={() => { setParseResult(null); setPasteText('') }} className="text-sm bg-gray-200 text-gray-600 px-4 py-1.5 rounded-lg font-medium hover:bg-gray-300 transition">清空</button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
